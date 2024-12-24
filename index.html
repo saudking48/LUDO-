@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ludo Game</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+            margin: 0;
+        }
+        canvas {
+            border: 2px solid #000;
+        }
+        .controls {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .controls button {
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 16px;
+        }
+        .dice {
+            font-size: 24px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <button onclick="rollDice()">Roll Dice</button>
+        <div class="dice" id="diceResult">Dice: 0</div>
+    </div>
+    <canvas id="ludoCanvas" width="600" height="600"></canvas>
+    <script>
+        const canvas = document.getElementById('ludoCanvas');
+        const ctx = canvas.getContext('2d');
+        const diceResult = document.getElementById('diceResult');
+        const boardSize = 600;
+        const cellSize = boardSize / 15;
+        const colors = ['red', 'green', 'yellow', 'blue'];
+        let diceValue = 0;
+
+        function drawBoard() {
+            ctx.clearRect(0, 0, boardSize, boardSize);
+
+            // Draw grid
+            for (let i = 0; i < 15; i++) {
+                for (let j = 0; j < 15; j++) {
+                    ctx.strokeRect(i * cellSize, j * cellSize, cellSize, cellSize);
+                }
+            }
+
+            // Draw color areas
+            drawColorArea(0, 0, colors[0]);
+            drawColorArea(0, 9, colors[1]);
+            drawColorArea(9, 0, colors[2]);
+            drawColorArea(9, 9, colors[3]);
+        }
+
+        function drawColorArea(startX, startY, color) {
+            ctx.fillStyle = color;
+            for (let i = startX; i < startX + 6; i++) {
+                for (let j = startY; j < startY + 6; j++) {
+                    ctx.fillRect(i * cellSize, j * cellSize, cellSize, cellSize);
+                }
+            }
+        }
+
+        function rollDice() {
+            diceValue = Math.floor(Math.random() * 6) + 1;
+            diceResult.textContent = `Dice: ${diceValue}`;
+        }
+
+        // Initialize the game
+        drawBoard();
+    </script>
+</body>
+  </html>
