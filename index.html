@@ -7,83 +7,117 @@
     <style>
         body {
             display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f4f4f4;
-            margin: 0;
-        }
-        canvas {
-            border: 2px solid #000;
-        }
-        .controls {
-            position: absolute;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
             flex-direction: column;
             align-items: center;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
         }
-        .controls button {
-            padding: 10px 20px;
-            margin: 5px;
-            font-size: 16px;
+        #game-board {
+            width: 600px;
+            height: 600px;
+            display: grid;
+            grid-template: repeat(15, 1fr) / repeat(15, 1fr);
+            border: 2px solid #000;
+            margin-top: 20px;
         }
-        .dice {
-            font-size: 24px;
+        .cell {
+            border: 1px solid #ccc;
+        }
+        .home {
+            background-color: yellow;
+        }
+        .safe {
+            background-color: lightgreen;
+        }
+        .player1 {
+            background-color: red;
+        }
+        .player2 {
+            background-color: blue;
+        }
+        .player3 {
+            background-color: green;
+        }
+        .player4 {
+            background-color: orange;
+        }
+        #controls {
+            margin-top: 20px;
+        }
+        #dice-result {
             margin-top: 10px;
         }
     </style>
 </head>
 <body>
-    <div class="controls">
-        <button onclick="rollDice()">Roll Dice</button>
-        <div class="dice" id="diceResult">Dice: 0</div>
+    <h1>Ludo Game</h1>
+    <div id="game-board">
+        <!-- Ludo board will be drawn here -->
     </div>
-    <canvas id="ludoCanvas" width="600" height="600"></canvas>
+    <div id="controls">
+        <button id="roll-dice">Roll Dice</button>
+        <div id="dice-result">Dice Result: <span id="dice-value"></span></div>
+    </div>
     <script>
-        const canvas = document.getElementById('ludoCanvas');
-        const ctx = canvas.getContext('2d');
-        const diceResult = document.getElementById('diceResult');
-        const boardSize = 600;
-        const cellSize = boardSize / 15;
-        const colors = ['red', 'green', 'yellow', 'blue'];
-        let diceValue = 0;
+        document.addEventListener('DOMContentLoaded', () => {
+            const board = document.getElementById('game-board');
+            const rollDiceButton = document.getElementById('roll-dice');
+            const diceValueSpan = document.getElementById('dice-value');
+            const players = ['player1', 'player2', 'player3', 'player4'];
+            let currentPlayer = 0;
 
-        function drawBoard() {
-            ctx.clearRect(0, 0, boardSize, boardSize);
+            initBoard();
 
-            // Draw grid
-            for (let i = 0; i < 15; i++) {
-                for (let j = 0; j < 15; j++) {
-                    ctx.strokeRect(i * cellSize, j * cellSize, cellSize, cellSize);
+            rollDiceButton.addEventListener('click', () => {
+                const diceValue = rollDice();
+                diceValueSpan.textContent = diceValue;
+                // Move the player based on dice value
+                movePlayer(players[currentPlayer], diceValue);
+                currentPlayer = (currentPlayer + 1) % players.length;
+            });
+
+            function initBoard() {
+                for (let i = 0; i < 225; i++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('cell');
+                    board.appendChild(cell);
                 }
+                // Set up home and safe cells
+                setupHomes();
+                setupSafeCells();
             }
 
-            // Draw color areas
-            drawColorArea(0, 0, colors[0]);
-            drawColorArea(0, 9, colors[1]);
-            drawColorArea(9, 0, colors[2]);
-            drawColorArea(9, 9, colors[3]);
-        }
-
-        function drawColorArea(startX, startY, color) {
-            ctx.fillStyle = color;
-            for (let i = startX; i < startX + 6; i++) {
-                for (let j = startY; j < startY + 6; j++) {
-                    ctx.fillRect(i * cellSize, j * cellSize, cellSize, cellSize);
-                }
+            function rollDice() {
+                return Math.floor(Math.random() * 6) + 1;
             }
-        }
 
-        function rollDice() {
-            diceValue = Math.floor(Math.random() * 6) + 1;
-            diceResult.textContent = `Dice: ${diceValue}`;
-        }
+            function setupHomes() {
+                const homePositions = [
+                    { start: 0, player: 'player1' },
+                    { start: 11, player: 'player2' },
+                    { start: 165, player: 'player3' },
+                    { start: 176, player: 'player4' }
+                ];
+                homePositions.forEach(home => {
+                    for (let i = 0; i < 9; i++) {
+                        const cellIndex = home.start + Math.floor(i / 3) * 15 + (i % 3);
+                        board.children[cellIndex].classList.add(home.player, 'home');
+                    }
+                });
+            }
 
-        // Initialize the game
-        drawBoard();
+            function setupSafeCells() {
+                const safePositions = [1, 4, 9, 14, 45, 50, 55, 60, 105, 110, 115, 120, 151, 156, 161, 164];
+                safePositions.forEach(pos => {
+                    board.children[pos].classList.add('safe');
+                });
+            }
+
+            function movePlayer(player, steps) {
+                // Placeholder function to move player piece
+                console.log(`${player} moves ${steps} steps`);
+            }
+        });
     </script>
 </body>
-  </html>
+</html>
